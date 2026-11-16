@@ -1,0 +1,105 @@
+---
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+import { langPaths, langOf, pathFor } from '../../lib/i18n';
+
+export const getStaticPaths = langPaths;
+const lang = langOf(Astro.params.lang);
+const p = (slug: string) => url(pathFor(lang, slug));
+
+const t = {
+  es: {
+    title: 'Lavanda de Osset: lavanda directa del agricultor',
+    description: 'Flor de lavanda en bolsa y jornadas de recolección en Osset, Andilla, en la Serranía de Valencia. Directo del agricultor.',
+    eyebrow: 'Osset · Andilla · La Serranía, Valencia',
+    h1: 'Lavanda directa de quien la cultiva.',
+    sub: 'Cultivamos lavanda en Osset, una aldea de Andilla en la Serranía, en el interior de Valencia. La vendemos sin intermediarios, y te invitamos a venir a recogerla.',
+    shop: 'Comprar lavanda',
+    visit: 'Ven a recoger',
+    cards: [
+      { h: 'Flor de lavanda en bolsa', p: 'Flor seca de nuestros campos, cortada y embolsada en la finca. Pídela por WhatsApp o email.', slug: '/lavanda', cta: 'Ver la lavanda' },
+      { h: 'Jornadas de recolección', p: 'Pasa un día entre las filas de lavanda en flor, en plena Serranía, y llévate a casa lo que recojas.', slug: '/experiencias', cta: 'Ver las experiencias' },
+    ],
+    whyH: 'Del campo a tu casa',
+    why: 'Sin tiendas ni almacenes en medio: hablas con el agricultor, y la lavanda sale de la finca directamente hacia ti.',
+  },
+  en: {
+    title: 'Lavanda de Osset: lavender direct from the grower',
+    description: 'Bagged lavender flowers and lavender-picking days in Osset, Andilla, in the Serranía of inland Valencia. Direct from the grower.',
+    eyebrow: 'Osset · Andilla · La Serranía, Valencia',
+    h1: 'Lavender, direct from the person who grows it.',
+    sub: 'We grow lavender in Osset, a hamlet of Andilla in la Serranía, inland from Valencia. We sell it with no middlemen, and you are welcome to come and pick it.',
+    shop: 'Buy lavender',
+    visit: 'Come and pick',
+    cards: [
+      { h: 'Lavender flowers in bags', p: 'Dried flowers from our fields, cut and bagged on the farm. Order by WhatsApp or email.', slug: '/lavanda', cta: 'See the lavender' },
+      { h: 'Lavender-picking days', p: 'Spend a day among rows of lavender in flower, in the Spanish Serranía, and take home what you pick.', slug: '/experiencias', cta: 'See the experiences' },
+    ],
+    whyH: 'From the field to your door',
+    why: 'No shops or warehouses in between: you deal with the grower, and the lavender goes straight from the farm to you.',
+  },
+}[lang];
+---
+
+<Base lang={lang} slug="/" title={t.title} description={t.description}>
+  <section class="hero">
+    <div class="container hero-inner">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h1>{t.h1}</h1>
+      <p class="hero-sub">{t.sub}</p>
+      <div class="actions">
+        <a href={p('/lavanda')} class="btn btn--primary">{t.shop}</a>
+        <a href={p('/experiencias')} class="btn btn--outline">{t.visit}</a>
+      </div>
+    </div>
+  </section>
+  <div class="rows" aria-hidden="true"></div>
+
+  <section class="alt">
+    <div class="container grid-2">
+      {t.cards.map(c => (
+        <div class="card">
+          <h2>{c.h}</h2>
+          <p class="text-muted">{c.p}</p>
+          <a href={p(c.slug)}>{c.cta} &rarr;</a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <div class="container--narrow text-center">
+      <h2>{t.whyH}</h2>
+      <p class="text-muted">{t.why}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding: 6rem 0 4rem;
+  }
+
+  .hero-inner {
+    max-width: 760px;
+  }
+
+  .eyebrow {
+    color: var(--color-sage);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+  }
+
+  .hero h1 {
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+    line-height: 1.8;
+  }
+</style>

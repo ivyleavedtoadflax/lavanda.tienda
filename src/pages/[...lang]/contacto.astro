@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import { langPaths, langOf } from '../../lib/i18n';
+import { EMAIL, whatsapp } from '../../lib/site';
+
+export const getStaticPaths = langPaths;
+const lang = langOf(Astro.params.lang);
+
+const t = {
+  es: {
+    title: 'Contacto',
+    description: 'Habla directamente con el agricultor: WhatsApp o email.',
+    h1: 'Contacto',
+    intro: 'Hablas directamente con el agricultor. Escríbenos para pedidos, reservas o cualquier pregunta.',
+    hi: 'Hola',
+    where: 'Osset, Andilla · La Serranía, Valencia',
+  },
+  en: {
+    title: 'Contact',
+    description: 'Talk directly to the grower: WhatsApp or email.',
+    h1: 'Contact',
+    intro: 'You talk directly to the grower. Message us for orders, bookings or any question.',
+    hi: 'Hello',
+    where: 'Osset, Andilla · La Serranía, Valencia, Spain',
+  },
+}[lang];
+---
+
+<Base lang={lang} slug="/contacto" title={t.title} description={t.description}>
+  <section>
+    <div class="container--narrow">
+      <h1>{t.h1}</h1>
+      <p class="lead text-muted mt-2">{t.intro}</p>
+      <div class="actions mt-3">
+        <a href={whatsapp(t.hi)} target="_blank" rel="noopener" class="btn btn--whatsapp">WhatsApp</a>
+        <a href={`mailto:${EMAIL}`} class="btn btn--outline">{EMAIL}</a>
+      </div>
+      <p class="text-muted mt-4">{t.where}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lead {
+    font-size: 1.15rem;
+  }
+</style>

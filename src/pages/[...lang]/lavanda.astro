@@ -1,0 +1,101 @@
+---
+import Base from '../../layouts/Base.astro';
+import { langPaths, langOf } from '../../lib/i18n';
+import { products, whatsapp, mailto } from '../../lib/site';
+
+export const getStaticPaths = langPaths;
+const lang = langOf(Astro.params.lang);
+
+const t = {
+  es: {
+    title: 'Flor de lavanda en bolsa',
+    description: 'Flor de lavanda seca en bolsa, directa de la finca en Osset (Andilla, Valencia). Pide por WhatsApp o email.',
+    h1: 'Flor de lavanda en bolsa',
+    intro: 'Cultivada, cortada y embolsada por nosotros en Osset. Para cajones, armarios, saquitos o lo que se te ocurra.',
+    ask: 'Precio a consultar',
+    order: (name: string) => `Hola, quiero pedir: ${name}.`,
+    wa: 'Pedir por WhatsApp',
+    email: 'Pedir por email',
+    howH: 'Cómo pedir',
+    how: [
+      'Escríbenos por WhatsApp o email con lo que quieres.',
+      'Te confirmamos precio, envío o recogida en la finca.',
+      'Pagas y te lo enviamos.',
+    ],
+  },
+  en: {
+    title: 'Lavender flowers in bags',
+    description: 'Dried lavender flowers in bags, direct from the farm in Osset (Andilla, Valencia). Order by WhatsApp or email.',
+    h1: 'Lavender flowers in bags',
+    intro: 'Grown, cut and bagged by us in Osset. For drawers, wardrobes, sachets or whatever you like.',
+    ask: 'Ask for price',
+    order: (name: string) => `Hello, I would like to order: ${name}.`,
+    wa: 'Order on WhatsApp',
+    email: 'Order by email',
+    howH: 'How to order',
+    how: [
+      'Message us on WhatsApp or email with what you would like.',
+      'We confirm the price, and delivery or collection from the farm.',
+      'You pay, and we send it.',
+    ],
+  },
+}[lang];
+---
+
+<Base lang={lang} slug="/lavanda" title={t.title} description={t.description}>
+  <section>
+    <div class="container--narrow">
+      <h1>{t.h1}</h1>
+      <p class="lead text-muted mt-2">{t.intro}</p>
+    </div>
+  </section>
+  <div class="rows" aria-hidden="true"></div>
+
+  <section class="alt">
+    <div class="container grid-2">
+      {products.map(prod => {
+        const name = prod.size ? `${prod.name[lang]} (${prod.size[lang]})` : prod.name[lang];
+        return (
+          <div class="card">
+            <h2>{name}</h2>
+            <p class="text-muted">{prod.description[lang]}</p>
+            <p class="price">{prod.price ?? t.ask}</p>
+            <div class="actions">
+              <a href={whatsapp(t.order(name))} target="_blank" rel="noopener" class="btn btn--whatsapp">{t.wa}</a>
+              <a href={mailto(name, t.order(name))} class="btn btn--outline">{t.email}</a>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </section>
+
+  <section>
+    <div class="container--narrow">
+      <h2>{t.howH}</h2>
+      <ol class="how">
+        {t.how.map(step => <li>{step}</li>)}
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lead {
+    font-size: 1.15rem;
+  }
+
+  .price {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--color-accent);
+  }
+
+  .how {
+    padding-left: 1.25rem;
+  }
+
+  .how li {
+    margin-bottom: 0.5rem;
+  }
+</style>
