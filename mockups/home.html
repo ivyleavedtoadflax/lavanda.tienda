@@ -469,7 +469,13 @@
 
   const names = h => HOURS[lang][h < 0.2 ? 0 : h < 0.4 ? 1 : h < 0.62 ? 2 : h < 0.85 ? 3 : 4];
   let hour = reduce ? 0.78 : 0.02, t0 = performance.now(), intro = !reduce;
+  // 30 fps: the browser still calls every screen frame, but only every other one
+  // draws (the 2 ms slack keeps 60 Hz screens from dropping to 20 fps).
+  const FRAME_MS = 1000 / 30;
+  let lastDraw = -Infinity;
   function frame(now) {
+    if (now - lastDraw < FRAME_MS - 2 && !reduce && onScreen) { requestAnimationFrame(frame); return; }
+    lastDraw = now;
     const t = (now - t0) / 1000;
     if (intro) {
       const k = Math.min(1, t / 3.5), e = 1 - Math.pow(1 - k, 3);
