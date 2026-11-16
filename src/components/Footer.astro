@@ -11,9 +11,7 @@ const year = new Date().getFullYear();
 
 <footer class="site-footer">
   <div class="container footer-inner">
-    <p class="text-muted">
-      &copy; {year} Lavanda de la Serranía &middot; Osset, Andilla (Valencia)
-    </p>
+    <p>&copy; {year} Lavanda de la Serranía, Osset (Andilla), Valencia</p>
     <div class="footer-links">
       <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
       <a href={whatsapp(lang === 'es' ? 'Hola' : 'Hello')} target="_blank" rel="noopener">WhatsApp</a>
@@ -23,8 +21,10 @@ const year = new Date().getFullYear();
 
 <style>
   .site-footer {
-    border-top: 1px solid var(--color-border);
-    padding: 2rem 0;
+    border-top: 1px solid var(--line);
+    padding-block: 2rem;
+    color: var(--muted);
+    font-size: 0.9rem;
   }
 
   .footer-inner {
@@ -32,10 +32,7 @@ const year = new Date().getFullYear();
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-  }
-
-  .footer-inner p {
-    margin: 0;
+    flex-wrap: wrap;
   }
 
   .footer-links {
@@ -45,18 +42,10 @@ const year = new Date().getFullYear();
 
   .footer-links a,
   .footer-links a:visited {
-    color: var(--color-text-muted);
-    font-size: 0.9rem;
+    color: var(--muted);
   }
 
   .footer-links a:hover {
-    color: var(--color-accent);
-  }
-
-  @media (max-width: 768px) {
-    .footer-inner {
-      flex-direction: column;
-      text-align: center;
-    }
+    color: var(--lavanda);
   }
 </style>

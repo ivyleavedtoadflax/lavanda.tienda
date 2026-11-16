@@ -5,12 +5,12 @@ import { url } from '../lib/url';
 
 <Base lang="es" slug="/" title="Página no encontrada · Page not found" description="Esta página no existe. This page doesn't exist.">
   <section>
-    <div class="container--narrow text-center not-found">
+    <div class="container--narrow not-found">
       <h1>404</h1>
       <p>Esta página no existe. <span lang="en">This page doesn&rsquo;t exist.</span></p>
       <div class="actions">
-        <a href={url('/')} class="btn btn--primary">Inicio</a>
-        <a href={url('/en/')} class="btn btn--outline" lang="en">Home</a>
+        <a href={url('/')} class="btn btn--solid">Inicio</a>
+        <a href={url('/en/')} class="btn btn--line" lang="en">Home</a>
       </div>
     </div>
   </section>
@@ -27,7 +27,7 @@ import { url } from '../lib/url';
   }
 
   .not-found p {
-    color: var(--color-text-muted);
+    color: var(--muted);
     margin-bottom: 2rem;
   }
 

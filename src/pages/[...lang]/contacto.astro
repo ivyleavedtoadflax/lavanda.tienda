@@ -13,7 +13,7 @@ const t = {
     h1: 'Contacto',
     intro: 'Hablas directamente con el agricultor. Escríbenos para pedidos, reservas o cualquier pregunta.',
     hi: 'Hola',
-    where: 'Osset, Andilla · La Serranía, Valencia',
+    where: 'Osset, Andilla, en la Serranía de Valencia',
   },
   en: {
     title: 'Contact',
@@ -21,21 +21,21 @@ const t = {
     h1: 'Contact',
     intro: 'You talk directly to the grower. Message us for orders, bookings or any question.',
     hi: 'Hello',
-    where: 'Osset, Andilla · La Serranía, Valencia, Spain',
+    where: 'Osset, Andilla, in la Serranía, Valencia, Spain',
   },
 }[lang];
 ---
 
 <Base lang={lang} slug="/contacto" title={t.title} description={t.description}>
   <section>
-    <div class="container--narrow">
+    <div class="container--narrow stack contact">
       <h1>{t.h1}</h1>
-      <p class="lead text-muted mt-2">{t.intro}</p>
-      <div class="actions mt-3">
-        <a href={whatsapp(t.hi)} target="_blank" rel="noopener" class="btn btn--whatsapp">WhatsApp</a>
-        <a href={`mailto:${EMAIL}`} class="btn btn--outline">{EMAIL}</a>
+      <p class="lead">{t.intro}</p>
+      <div class="actions">
+        <a href={whatsapp(t.hi)} target="_blank" rel="noopener" class="btn btn--solid">WhatsApp</a>
+        <a href={`mailto:${EMAIL}`} class="btn btn--line">{EMAIL}</a>
       </div>
-      <p class="text-muted mt-4">{t.where}</p>
+      <p class="muted">{t.where}</p>
     </div>
   </section>
 </Base>
