@@ -500,7 +500,8 @@
 
   // ── Speed meter (mockup only): the "Medir" button, or #fps in the address ──
   // draw = ms our code spends per frame (budget: 16.7 ms for 60 fps);
-  // fps = frames the screen actually shows; slow = share of frames over 25 ms.
+  // fps = frames the screen actually shows; slow = share of frames that came
+  // more than 1.5x late (over 50 ms at the 30 fps cap).
   let meter = null;
   function startMeter() {
     if (meter) return;
@@ -513,7 +514,7 @@
       if (last) gaps.push(now - last); last = now; draws.push(ms);
       if (draws.length > 180) { draws.shift(); gaps.shift(); }
       if (now - shown < 500 || gaps.length < 10) return; shown = now;
-      const fps = 1000 / pct(gaps, 0.5), slow = gaps.filter(g => g > 25).length / gaps.length;
+      const fps = 1000 / pct(gaps, 0.5), slow = gaps.filter(g => g > FRAME_MS * 1.5).length / gaps.length;
       box.textContent = `draw ${pct(draws, 0.5).toFixed(1)} ms (p95 ${pct(draws, 0.95).toFixed(1)})  ·  ${Math.round(fps)} fps  ·  slow ${Math.round(slow * 100)}%  ·  ${tufts.length} bushes  ·  ${cv.width}×${cv.height}`;
     } };
   }
