@@ -61,6 +61,10 @@
            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
   .light input { width: 140px; accent-color: #c9b8ff; }
   .light output { min-width: 6.5em; }
+  .measure { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); bottom: 16px; font: inherit; font-size: 0.8rem;
+             background: rgba(20, 16, 30, 0.45); color: #fff; border: 0; border-radius: 999px; padding: 0.45rem 0.85rem; cursor: pointer; }
+  .meter { position: absolute; left: max(16px, env(safe-area-inset-left, 0px)); top: 12px; right: max(16px, env(safe-area-inset-right, 0px));
+           background: rgba(10, 8, 16, 0.7); color: #fff; font: 12px/1.4 ui-monospace, Menlo, monospace; padding: 0.4rem 0.6rem; border-radius: 6px; }
 
   .lede { display: grid; grid-template-columns: 1.3fr 1fr; gap: 2.5rem; align-items: end; padding-block: 3rem 4rem; }
   .lede > * { min-width: 0; }
@@ -153,6 +157,7 @@
     <input id="hour" type="range" min="0" max="100" value="78" aria-label="Hora del día">
     <output id="hourName" for="hour">Atardecer</output>
   </label>
+  <button id="measure" class="measure" type="button">Medir</button>
 </div>
 
 <div class="wrap lede">
@@ -468,7 +473,9 @@
       if (k === 1) intro = false;
     }
     hourName.textContent = names(hour);
+    const d0 = performance.now();
     draw(hour, t);
+    if (meter) meter.tick(now, performance.now() - d0);
     if (!reduce && onScreen) requestAnimationFrame(frame); else running = false;
   }
   let onScreen = true, running = false;
@@ -479,6 +486,28 @@
     if (reduce) { hourName.textContent = names(hour); draw(hour, 0); }
   });
   addEventListener('resize', () => { build(); if (reduce) draw(hour, 0); });
+
+  // ── Speed meter (mockup only): the "Medir" button, or #fps in the address ──
+  // draw = ms our code spends per frame (budget: 16.7 ms for 60 fps);
+  // fps = frames the screen actually shows; slow = share of frames over 25 ms.
+  let meter = null;
+  function startMeter() {
+    if (meter) return;
+    const box = document.createElement('div');
+    box.className = 'meter'; box.setAttribute('aria-live', 'off');
+    document.querySelector('.scene').append(box);
+    const draws = [], gaps = []; let last = 0, shown = 0;
+    const pct = (a, q) => { const b = [...a].sort((x, y) => x - y); return b[Math.min(b.length - 1, Math.floor(b.length * q))] || 0; };
+    meter = { tick(now, ms) {
+      if (last) gaps.push(now - last); last = now; draws.push(ms);
+      if (draws.length > 180) { draws.shift(); gaps.shift(); }
+      if (now - shown < 500 || gaps.length < 10) return; shown = now;
+      const fps = 1000 / pct(gaps, 0.5), slow = gaps.filter(g => g > 25).length / gaps.length;
+      box.textContent = `draw ${pct(draws, 0.5).toFixed(1)} ms (p95 ${pct(draws, 0.95).toFixed(1)})  ·  ${Math.round(fps)} fps  ·  slow ${Math.round(slow * 100)}%  ·  ${tufts.length} bushes  ·  ${cv.width}×${cv.height}`;
+    } };
+  }
+  document.getElementById('measure').addEventListener('click', startMeter);
+  if (location.hash.includes('fps')) startMeter();
 
 
   // ── Spanish / English ──
@@ -538,7 +567,7 @@
     setLang(lang === 'es' ? 'en' : 'es');
     try { history.replaceState(null, '', lang === 'en' ? '#en' : '#inicio'); } catch {}
   });
-  if (location.hash === '#en') setLang('en');
+  if (location.hash.includes('en')) setLang('en');
   build();
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { bgKey = -1; start(); });
 
