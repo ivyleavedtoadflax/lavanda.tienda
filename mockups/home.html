@@ -151,7 +151,7 @@
 </header>
 
 <div class="scene" id="inicio">
-  <canvas id="scene" role="img" aria-label="Campos de lavanda en flor, en filas, bajo las sierras de la Serranía de Valencia"></canvas>
+  <canvas id="scene" role="img" aria-label="Lavanda de la Serranía: campos de lavanda en flor, en filas, bajo las sierras de la Serranía de Valencia"></canvas>
   <label class="light">
     <span>Luz</span>
     <input id="hour" type="range" min="0" max="100" value="78" aria-label="Hora del día">
@@ -393,12 +393,14 @@
     };
     ridge(ridges[0]); ridge(ridges[1]);
 
-    // The word sits in the sierra: the near ridges cover its foot.
-    const fs = Math.min(W * 0.19, H * 0.36, 280);
-    ctx.font = `${fs}px 'Young Serif', Georgia, serif`;
+    // The name: "Lavanda" rises out of the sierra (the near ridges cover its
+    // foot); "de la Serranía" is set across the dark front ridge, after the pines.
+    const fs = Math.min(W * 0.23, H * 0.34, 300), fs2 = Math.max(17, fs * 0.3);
+    const lit = rgb(mix(c.bot, [255, 255, 255], 0.55), 0.94);
     ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = rgb(mix(c.bot, [255, 255, 255], 0.55), 0.92);
-    ctx.fillText('Serranía', W / 2, H * 0.5);
+    ctx.font = `${fs}px 'Young Serif', Georgia, serif`;
+    ctx.fillStyle = lit;
+    ctx.fillText('Lavanda', W / 2, H * 0.49);
 
     ridge(ridges[2]); ridge(ridges[3]);
 
@@ -415,6 +417,9 @@
         ctx.beginPath(); ctx.ellipse(bx, by, s * 0.62, s * 0.38, 0, 0, 7); ctx.fill();
       }
     }
+    ctx.font = `${fs2}px 'Young Serif', Georgia, serif`;
+    ctx.fillStyle = lit;
+    ctx.fillText('de la Serranía', W / 2, horizon - H * 0.025);
 
     // field: earth
     const eg = ctx.createLinearGradient(0, horizon, 0, H);
@@ -540,8 +545,8 @@
   };
   const HOURS = { es: ['Amanecer', 'Mañana', 'Mediodía', 'Tarde', 'Atardecer'], en: ['Dawn', 'Morning', 'Midday', 'Afternoon', 'Dusk'] };
   const ATTR = {
-    es: { nav: 'Principal', scene: 'Campos de lavanda en flor, en filas, bajo las sierras de la Serranía de Valencia', hour: 'Hora del día' },
-    en: { nav: 'Main', scene: 'Lavender fields in flower, in rows, below the hills of the Serranía in inland Valencia', hour: 'Time of day' },
+    es: { nav: 'Principal', scene: 'Lavanda de la Serranía: campos de lavanda en flor, en filas, bajo las sierras de la Serranía de Valencia', hour: 'Hora del día' },
+    en: { nav: 'Main', scene: 'Lavanda de la Serranía: lavender fields in flower, in rows, below the hills of the Serranía in inland Valencia', hour: 'Time of day' },
   };
   const targets = [...document.querySelectorAll('.top nav a:not(#lang), h1, h2, h3, p:not(.addr), .btn, .tag strong, .tag small, .tag dt, footer .wrap, .cal-strip span:first-child, .light > span, #copy')]
     .filter(el => EN[el.innerHTML.trim()] !== undefined)
