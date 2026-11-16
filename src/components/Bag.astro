@@ -1,0 +1,102 @@
+---
+// A kraft bag with its label: the product as it leaves the farm.
+import type { Lang } from '../lib/site';
+
+interface Props {
+  lang: Lang;
+  /** Shown on the label; empty shows a dash. */
+  weight?: string;
+}
+
+const { lang, weight } = Astro.props;
+const t = {
+  es: { name: 'Flor de lavanda', from: 'Cultivada en Osset, Andilla', harvest: 'Cosecha', weight: 'Peso' },
+  en: { name: 'Lavender flowers', from: 'Grown in Osset, Andilla', harvest: 'Harvest', weight: 'Weight' },
+}[lang];
+---
+
+<div class="bag" aria-hidden="true">
+  <div class="tag">
+    <svg viewBox="0 0 32 40">
+      <path d="M16 39V14" stroke="#4a6754" stroke-width="1.6" fill="none"></path>
+      <g fill="#6a55a6">
+        <ellipse cx="16" cy="5" rx="2.6" ry="3.6"></ellipse>
+        <ellipse cx="13" cy="10" rx="2.3" ry="3"></ellipse>
+        <ellipse cx="19" cy="10" rx="2.3" ry="3"></ellipse>
+        <ellipse cx="13.4" cy="15.5" rx="2.1" ry="2.7"></ellipse>
+        <ellipse cx="18.6" cy="15.5" rx="2.1" ry="2.7"></ellipse>
+      </g>
+    </svg>
+    <strong>{t.name}</strong>
+    <small>{t.from}</small>
+    <dl>
+      <dt>{t.harvest}</dt><dd>{new Date().getFullYear()}</dd>
+      <dt>{t.weight}</dt><dd>{weight ?? '—'}</dd>
+    </dl>
+  </div>
+</div>
+
+<style>
+  .bag {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 3 / 4;
+    background: var(--kraft);
+    background-image: repeating-linear-gradient(90deg, transparent 0 22px, rgba(0, 0, 0, 0.04) 22px 23px);
+    clip-path: polygon(0 6%, 6% 0, 12% 6%, 18% 0, 24% 6%, 30% 0, 36% 6%, 42% 0, 48% 6%, 54% 0, 60% 6%, 66% 0, 72% 6%, 78% 0, 84% 6%, 90% 0, 96% 6%, 100% 0, 100% 100%, 0 100%);
+    display: grid;
+    place-items: center;
+  }
+
+  .tag {
+    width: 72%;
+    background: var(--label);
+    color: var(--kraft-ink);
+    padding: 1.1rem 1rem 1rem;
+    text-align: center;
+    border-radius: 2px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+    display: grid;
+    gap: 0.35rem;
+    justify-items: center;
+    transform: rotate(-2deg);
+  }
+
+  svg {
+    width: 44px;
+    height: 56px;
+  }
+
+  strong {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 1.35rem;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  small {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 0.1rem 0.75rem;
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  dt {
+    text-align: right;
+  }
+
+  dd {
+    text-align: left;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

@@ -1,0 +1,220 @@
+---
+import Base from '../../layouts/Base.astro';
+import Scene from '../../components/Scene.astro';
+import Bag from '../../components/Bag.astro';
+import Day from '../../components/Day.astro';
+import { url } from '../../lib/url';
+import { langPaths, langOf, pathFor } from '../../lib/i18n';
+import { EMAIL, whatsapp, products } from '../../lib/site';
+
+export const getStaticPaths = langPaths;
+const lang = langOf(Astro.params.lang);
+const p = (slug: string) => url(pathFor(lang, slug));
+
+// Flowering and harvest months, 0 = January. TODO: confirm.
+const FLOWERING = [5, 6];
+
+const t = {
+  es: {
+    title: 'Lavanda de la Serranía: lavanda directa del agricultor',
+    description: 'Flor de lavanda en bolsa y jornadas de recolección en Osset, Andilla, en la Serranía de Valencia. Directo del agricultor.',
+    h1: 'Lavanda de la Serranía, directa de quien la cultiva.',
+    lede: 'Cultivamos lavanda en Osset, una aldea de Andilla en el interior de Valencia. La vendemos sin intermediarios, y en temporada puedes venir a recogerla.',
+    shop: 'Comprar lavanda',
+    book: 'Reservar un día',
+    fincaH: 'Una finca en Osset',
+    finca: [
+      'Osset es una aldea de Andilla, en la Serranía: sierras de pino y piedra caliza a una hora larga de Valencia. Aquí la lavanda crece en filas, entre bancales y monte.',
+      'No hay almacenes ni tiendas en medio. Hablas con el agricultor, y la lavanda sale de la finca hacia ti.',
+    ],
+    calH: 'Cuándo florece',
+    months: 'EFMAMJJASOND',
+    calLabel: 'Floración en junio y julio',
+    calKey: 'Floración y recolección: junio y julio. La flor seca se vende todo el año.',
+    bagH: 'Flor de lavanda en bolsa',
+    bag: 'Flor seca de nuestros campos, cortada y embolsada en la finca. Para cajones, armarios, saquitos o lo que se te ocurra.',
+    ask: 'Precio a consultar',
+    orderMsg: 'Hola, quiero pedir flor de lavanda en bolsa.',
+    orderWa: 'Pedir por WhatsApp',
+    seeBag: 'Ver la lavanda',
+    dayH: 'Un día recogiendo lavanda',
+    day: 'En plena floración, en la Serranía. Grupos y familias, con reserva. Precio y fechas a consultar.',
+    dayMsg: 'Hola, me interesa un día recogiendo lavanda.',
+    bookWa: 'Reservar por WhatsApp',
+    seeDay: 'Ver la experiencia',
+    contactH: 'Escríbenos',
+    contact: 'Pedidos, reservas o cualquier pregunta. Te contesta el agricultor.',
+  },
+  en: {
+    title: 'Lavanda de la Serranía: lavender direct from the grower',
+    description: 'Bagged lavender flowers and lavender-picking days in Osset, Andilla, in the Serranía of inland Valencia. Direct from the grower.',
+    h1: 'Lavender from the Serranía, direct from the person who grows it.',
+    lede: 'We grow lavender in Osset, a hamlet of Andilla, inland from Valencia. We sell it with no middlemen, and in season you can come and pick it.',
+    shop: 'Buy lavender',
+    book: 'Book a day',
+    fincaH: 'A farm in Osset',
+    finca: [
+      'Osset is a hamlet of Andilla, in la Serranía: hills of pine and limestone, a good hour from Valencia. Here the lavender grows in rows, between terraces and scrub.',
+      'No warehouses or shops in between. You deal with the grower, and the lavender goes from the farm to you.',
+    ],
+    calH: 'When it flowers',
+    months: 'JFMAMJJASOND',
+    calLabel: 'Flowering in June and July',
+    calKey: 'Flowering and harvest: June and July. Dried flowers are sold all year.',
+    bagH: 'Lavender flowers in a bag',
+    bag: 'Dried flowers from our fields, cut and bagged on the farm. For drawers, wardrobes, sachets or whatever you like.',
+    ask: 'Ask for price',
+    orderMsg: 'Hello, I would like to order lavender flowers in a bag.',
+    orderWa: 'Order on WhatsApp',
+    seeBag: 'See the lavender',
+    dayH: 'A day picking lavender',
+    day: 'In full flower, in the Serranía. Groups and families, by booking. Ask us for price and dates.',
+    dayMsg: 'Hello, I am interested in a lavender-picking day.',
+    bookWa: 'Book on WhatsApp',
+    seeDay: 'See the experience',
+    contactH: 'Write to us',
+    contact: 'Orders, bookings or any question. The grower answers.',
+  },
+}[lang];
+---
+
+<Base lang={lang} slug="/" title={t.title} description={t.description}>
+  <Scene lang={lang} />
+
+  <div class="container split lede">
+    <h1>{t.h1}</h1>
+    <div class="stack">
+      <p class="lead">{t.lede}</p>
+      <div class="actions">
+        <a class="btn btn--solid" href={p('/lavanda')}>{t.shop}</a>
+        <a class="btn btn--line" href={p('/experiencias')}>{t.book}</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="alt">
+    <div class="container split">
+      <div class="stack">
+        <h2>{t.fincaH}</h2>
+        {t.finca.map(para => <p>{para}</p>)}
+      </div>
+      <div class="stack">
+        <h3>{t.calH}</h3>
+        <div class="cal" role="img" aria-label={t.calLabel}>
+          {[...t.months].map((m, i) => <span class:list={{ on: FLOWERING.includes(i) }}>{m}</span>)}
+        </div>
+        <p class="muted small">{t.calKey}</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container bolsa">
+      <Bag lang={lang} weight={products[0].size?.[lang]} />
+      <div class="stack">
+        <h2>{t.bagH}</h2>
+        <p>{t.bag}</p>
+        <p class="price">{products[0].price ?? t.ask}</p>
+        <div class="actions">
+          <a class="btn btn--solid" href={whatsapp(t.orderMsg)} target="_blank" rel="noopener">{t.orderWa}</a>
+          <a class="btn btn--line" href={p('/lavanda')}>{t.seeBag}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="container stack day">
+      <h2>{t.dayH}</h2>
+      <p>{t.day}</p>
+      <Day lang={lang} />
+      <div class="actions">
+        <a class="btn btn--solid" href={whatsapp(t.dayMsg)} target="_blank" rel="noopener">{t.bookWa}</a>
+        <a class="btn btn--line" href={p('/experiencias')}>{t.seeDay}</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container split">
+      <div class="stack">
+        <h2>{t.contactH}</h2>
+        <p class="muted">{t.contact}</p>
+      </div>
+      <div class="actions contact">
+        <a class="btn btn--solid" href={whatsapp(lang === 'es' ? 'Hola' : 'Hello')} target="_blank" rel="noopener">WhatsApp</a>
+        <a class="btn btn--line" href={`mailto:${EMAIL}`}>{EMAIL}</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lede {
+    padding-block: 3rem 4rem;
+    align-items: end;
+    grid-template-columns: 1.3fr 1fr;
+  }
+
+  .cal {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4px;
+  }
+
+  .cal span {
+    aspect-ratio: 1 / 1.6;
+    max-width: 100%;
+    display: grid;
+    place-items: end center;
+    padding-bottom: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    background: var(--cal);
+    border-radius: 4px;
+  }
+
+  .cal span.on {
+    background: var(--lavanda);
+    color: var(--cal);
+  }
+
+  .small {
+    font-size: 0.9rem;
+  }
+
+  .bolsa {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .bolsa > * {
+    min-width: 0;
+  }
+
+  .day {
+    gap: 1.5rem;
+  }
+
+  .contact {
+    align-self: center;
+  }
+
+  @media (max-width: 820px) {
+    .lede {
+      grid-template-columns: 1fr;
+    }
+
+    .bolsa {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      justify-items: center;
+    }
+
+    .bolsa .stack {
+      justify-self: stretch;
+    }
+  }
+</style>

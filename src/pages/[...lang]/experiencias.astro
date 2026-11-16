@@ -1,0 +1,84 @@
+---
+import Base from '../../layouts/Base.astro';
+import Day from '../../components/Day.astro';
+import { langPaths, langOf } from '../../lib/i18n';
+import { experience, whatsapp, mailto } from '../../lib/site';
+
+export const getStaticPaths = langPaths;
+const lang = langOf(Astro.params.lang);
+
+const t = {
+  es: {
+    title: 'Un día recogiendo lavanda',
+    description: 'Ven a recoger lavanda en Osset, Andilla, en la Serranía de Valencia. Reserva por WhatsApp o email.',
+    h1: 'Un día recogiendo lavanda',
+    intro: 'Un día en el campo, entre filas de lavanda en flor, en Osset: una aldea de Andilla en la Serranía, en el interior de Valencia.',
+    whenH: 'Cuándo',
+    when: 'Durante la floración, en verano. Escríbenos para conocer las fechas.',
+    priceH: 'Precio',
+    ask: 'A consultar. Pregúntanos por grupos y familias.',
+    whereH: 'Dónde',
+    where: 'Osset, Andilla (Valencia). Te enviamos la ubicación exacta al reservar.',
+    map: 'Ver Osset en el mapa',
+    msg: 'Hola, me interesa un día recogiendo lavanda. Fecha: ¿? Personas: ¿?',
+    subject: 'Un día recogiendo lavanda',
+    wa: 'Reservar por WhatsApp',
+    email: 'Reservar por email',
+  },
+  en: {
+    title: 'A day picking lavender',
+    description: 'Come and pick lavender in Osset, Andilla, in the Serranía of inland Valencia. Book by WhatsApp or email.',
+    h1: 'A day picking lavender',
+    intro: 'A day out in the fields, among rows of lavender in flower, in Osset: a hamlet of Andilla in la Serranía, inland from Valencia.',
+    whenH: 'When',
+    when: 'While the lavender flowers, in summer. Message us for dates.',
+    priceH: 'Price',
+    ask: 'Ask us. Groups and families welcome.',
+    whereH: 'Where',
+    where: 'Osset, Andilla (Valencia). We send the exact location when you book.',
+    map: 'See Osset on the map',
+    msg: 'Hello, I am interested in a lavender-picking day. Date: ? People: ?',
+    subject: 'A day picking lavender',
+    wa: 'Book on WhatsApp',
+    email: 'Book by email',
+  },
+}[lang];
+
+const mapUrl = 'https://www.openstreetmap.org/search?query=Osset%2C%20Andilla%2C%20Valencia';
+---
+
+<Base lang={lang} slug="/experiencias" title={t.title} description={t.description}>
+  <section>
+    <div class="container stack day">
+      <h1>{t.h1}</h1>
+      <p class="lead">{t.intro}</p>
+      <Day lang={lang} />
+      <div class="actions">
+        <a href={whatsapp(t.msg)} target="_blank" rel="noopener" class="btn btn--solid">{t.wa}</a>
+        <a href={mailto(t.subject, t.msg)} class="btn btn--line">{t.email}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="alt">
+    <div class="container split">
+      <div class="stack">
+        <h2>{t.whenH}</h2>
+        <p class="muted">{t.when}</p>
+        <h2>{t.priceH}</h2>
+        <p class="muted">{experience.price ?? t.ask}</p>
+      </div>
+      <div class="stack">
+        <h2>{t.whereH}</h2>
+        <p class="muted">{t.where}</p>
+        <a href={mapUrl} target="_blank" rel="noopener">{t.map}</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .day {
+    gap: 1.5rem;
+  }
+</style>
