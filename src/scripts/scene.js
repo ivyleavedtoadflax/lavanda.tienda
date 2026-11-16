@@ -225,34 +225,45 @@
   }
 
   const names = h => HOURS[h < 0.2 ? 0 : h < 0.4 ? 1 : h < 0.62 ? 2 : h < 0.85 ? 3 : 4];
-  let hour = reduce ? 0.78 : 0.02, t0 = performance.now(), intro = !reduce;
-  // 30 fps: the browser still calls every screen frame, but only every other one
-  // draws (the 2 ms slack keeps 60 Hz screens from dropping to 20 fps).
-  const FRAME_MS = 1000 / 30;
-  let lastDraw = -Infinity;
-  function frame(now) {
-    if (now - lastDraw < FRAME_MS - 2 && !reduce && onScreen) { requestAnimationFrame(frame); return; }
-    lastDraw = now;
-    const t = (now - t0) / 1000;
-    if (intro) {
-      const k = Math.min(1, t / 3.5), e = 1 - Math.pow(1 - k, 3);
-      hour = 0.02 + e * 0.76;
-      slider.value = Math.round(hour * 100);
-      if (k === 1) intro = false;
-    }
+  // The scene moves only for the opening: the sun comes up over 3.5 s while the
+  // lavender sways, then it holds its last frame and uses no CPU. After that it
+  // draws one frame per change: the slider, a resize, the font arriving.
+  // Reduced motion skips the opening and draws once.
+  const INTRO_S = 3.5;
+  const FRAME_MS = 1000 / 30; // the opening runs at 30 fps (2 ms slack for 60 Hz screens)
+  let hour = reduce ? 0.78 : 0.02, t0 = 0, tHeld = 0, intro = !reduce, lastDraw = -Infinity, queued = false;
+
+  function show(t) {
     hourName.textContent = names(hour);
     draw(hour, t);
-    if (!reduce && onScreen) requestAnimationFrame(frame); else running = false;
   }
-  let onScreen = true, running = false;
-  const start = () => { if (!running) { running = true; requestAnimationFrame(frame); } };
-  new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; if (onScreen && !reduce) start(); }).observe(cv);
-  slider.addEventListener('input', () => {
-    intro = false; hour = slider.value / 100;
-    if (reduce) { hourName.textContent = names(hour); draw(hour, 0); }
-  });
-  addEventListener('resize', () => { build(); if (reduce) draw(hour, 0); });
+  function frame(now) {
+    if (!intro) return;
+    if (!t0) t0 = now;
+    if (now - lastDraw >= FRAME_MS - 2) {
+      lastDraw = now;
+      tHeld = (now - t0) / 1000;
+      const k = Math.min(1, tHeld / INTRO_S);
+      hour = 0.02 + (1 - Math.pow(1 - k, 3)) * 0.76;
+      slider.value = Math.round(hour * 100);
+      show(tHeld);
+      if (k === 1) intro = false;
+    }
+    if (intro) requestAnimationFrame(frame);
+  }
+  // One frame on the next paint, however many changes arrive before it.
+  function redraw() {
+    if (intro || queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; show(tHeld); });
+  }
+
+  slider.addEventListener('input', () => { intro = false; hour = slider.value / 100; redraw(); });
+  addEventListener('resize', () => { build(); redraw(); });
 
   build();
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { bgKey = -1; start(); });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+    bgKey = -1;
+    if (intro) requestAnimationFrame(frame); else redraw();
+  });
 })();
